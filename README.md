@@ -187,12 +187,6 @@ The application currently runs in **demo mode** without actual AI models. This i
 2. Save models as `leaf_model.h5` and `seed_model.h5` in the `model/` directory
 3. Uncomment model loading lines in `app.py`
 
-## 🎤 Judge Presentation Points
-✅ **Working System**: Upload → Process → Result  
-✅ **Modular Design**: Easy to extend to other plant parts  
-✅ **Scalable Architecture**: Can add more disease types  
-✅ **Future Scope**: Offline mode, IVR support, multilingual  
-
 ## 🔮 Future Enhancements
 - [ ] Stem, root, and branch disease detection
 - [ ] Government schemes integration
