@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroVision - Smart Farming Assistant</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #2c3e50;
+            --accent: #f1c40f;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f9fbfd;
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        body.high-contrast {
+            --primary: #000;
+            --primary-dark: #333;
+            --text-dark: #000;
+            --text-light: #000;
+            --bg-light: #fff;
+            --glass: #fff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Space for mobile nav */
+        }
+
+        /* --- UTILITY CLASSES --- */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 24px; border-radius: 50px;
+            font-weight: 600; text-decoration: none;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .btn-primary:hover { transform: translateY(-3px); background: var(--primary-dark); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary-dark); background: transparent; }
+        .btn-outline:hover { background: rgba(46, 204, 113, 0.1); }
+
+        /* --- NAVBAR (Desktop) --- */
+        .navbar {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-logo a {
+            font-family: 'Roboto Slab', serif; font-size: 1.5rem; font-weight: 700;
+            color: var(--primary-dark); text-decoration: none;
+        }
+        .nav-menu { display: flex; gap: 2rem; list-style: none; }
+        .nav-menu a {
+            text-decoration: none; color: var(--text-dark); font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-menu a:hover, .nav-menu a.active { color: var(--primary); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 4rem 1.5rem;
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+            align-items: center; min-height: 80vh;
+        }
+        .hero-badge {
+            background: rgba(46, 204, 113, 0.15); color: var(--primary-dark);
+            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            display: inline-block; margin-bottom: 1rem;
+        }
+        .hero-title {
+            font-family: 'Roboto Slab', serif; font-size: 3.5rem;
+            line-height: 1.2; margin-bottom: 1.5rem;
+        }
+        .hero-title span { color: var(--primary); }
+        .hero-desc {
+            font-size: 1.15rem; color: var(--text-light); line-height: 1.6;
+            margin-bottom: 2rem; max-width: 90%;
+        }
+        
+        /* Hero Visual (CSS Only) */
+        .hero-visual { position: relative; }
+        .visual-card {
+            background: white; border-radius: 24px; padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative; z-index: 2;
+            animation: float 6s ease-in-out infinite;
+        }
+        .visual-blob {
+            position: absolute; width: 300px; height: 300px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.2; filter: blur(40px); z-index: 1;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* --- WEATHER WIDGET --- */
+        .weather-section {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-radius: 20px;
+            padding: 2rem; color: white;
+            max-width: 1000px; margin: -50px auto 4rem;
+            position: relative; z-index: 5;
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.3);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .weather-main { display: flex; align-items: center; gap: 1rem; }
+        .weather-temp { font-size: 3rem; font-weight: 700; }
+        .weather-details { display: flex; gap: 2rem; }
+        .weather-detail-item { text-align: center; }
+        .weather-detail-item strong { display: block; font-size: 1.2rem; }
+        .weather-detail-item span { font-size: 0.9rem; opacity: 0.9; }
+
+        /* --- FEATURES GRID --- */
+        .features { max-width: 1200px; margin: 0 auto 4rem; padding: 0 1.5rem; }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-size: 2.5rem; color: var(--secondary); margin-bottom: 0.5rem; }
+        
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: white; padding: 2rem; border-radius: var(--radius);
+            box-shadow: var(--shadow); transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+        .feature-link {
+            color: var(--primary); text-decoration: none; font-weight: 600;
+            display: inline-flex; align-items: center; margin-top: 1rem;
+        }
+        .feature-link:hover { gap: 8px; } /* Slide effect */
+
+        /* --- HOW IT WORKS (Timeline) --- */
+        .how-it-works { background: #fff; padding: 5rem 1.5rem; }
+        .steps-container {
+            max-width: 1000px; margin: 0 auto;
+            display: flex; justify-content: space-between; position: relative;
+        }
+        .steps-container::before {
+            content: ''; position: absolute; top: 40px; left: 0; width: 100%; height: 2px;
+            background: #eee; z-index: 1;
+        }
+        .step-card {
+            position: relative; z-index: 2; background: white; width: 30%;
+            text-align: center; padding: 1rem;
+        }
+        .step-icon {
+            width: 80px; height: 80px; background: white; border: 2px solid var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 1.5rem;
+            box-shadow: 0 0 0 10px #fff; /* Masks the line */
+        }
+
+        /* --- FOOTER & MOBILE NAV --- */
+        .mobile-bottom-nav {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; border-top: 1px solid #eee; z-index: 999;
+            padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        }
+        .mobile-bottom-nav ul {
+            display: flex; justify-content: space-around; list-style: none;
+        }
+        .mobile-bottom-nav a {
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; color: #999; font-size: 0.75rem; gap: 4px;
+        }
+        .mobile-bottom-nav a.active { color: var(--primary); }
+        .mobile-bottom-nav .nav-icon { font-size: 1.4rem; }
+
+        /* Footer Styles (Included from previous turn) */
+        .footer { background: white; margin-top: 4rem; border-top: 1px solid #eee; padding-top: 3rem; }
+        .footer-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;
+        }
+        .footer-bottom { text-align: center; padding: 2rem; color: #888; border-top: 1px solid #eee; margin-top: 2rem; }
+        
+        /* Utils */
+        .offline-indicator {
+            background: #e74c3c; color: white; text-align: center; padding: 0.5rem; display: none;
+        }
+        .offline-indicator.show { display: block; }
+        .back-to-top {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 45px; height: 45px; background: var(--secondary); color: white;
+            border-radius: 50%; border: none; cursor: pointer; display: none;
+            z-index: 990; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu { display: none; } /* Hide desktop menu */
+            .mobile-bottom-nav { display: block; } /* Show mobile menu */
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 2rem; gap: 2rem; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-desc { margin: 0 auto 2rem; }
+            .weather-section { flex-direction: column; text-align: center; gap: 1.5rem; margin-top: 2rem; }
+            .steps-container { flex-direction: column; gap: 2rem; }
+            .steps-container::before { width: 2px; height: 100%; left: 50%; top: 0; }
+            .step-icon { margin-bottom: 0.5rem; }
+            body { padding-bottom: 80px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="offline-indicator" id="offlineIndicator">⚠️ You are currently offline.</div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">🌾 <span data-lang="appName">AgroVision</span></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" class="active" data-lang="navHome">Home</a></li>
+                <li><a href="/detect" data-lang="navDetect">Detect Disease</a></li>
+                <li><a href="/schemes" data-lang="navSchemes">Govt Schemes</a></li>
+                <li><a href="/voice" data-lang="navVoice">Voice Help</a></li>
+                <li><a href="/chatbot">🤖 Chatbot</a></li>
+            </ul>
+            <div class="language-selector">
+                <select id="languageSelect" onchange="changeLanguage(this.value)" style="padding: 5px; border-radius: 6px;">
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                    <option value="mr">मराठी</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge" data-lang="aiBadge">✨ AI-Powered Farming</div>
+                <h1 class="hero-title" id="greeting"><span data-lang="welcomeTo">Welcome to</span> <br><span>AgroVision</span></h1>
+                <p class="hero-desc" data-lang="heroDescription">Identify plant diseases instantly, access government schemes, and get expert advice—all in one place.</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <a href="/detect" class="btn btn-primary" data-lang="btnStartDetection">🚀 Start Detection</a>
+                    <a href="#how-it-works" class="btn btn-outline" data-lang="btnLearnMore">📚 Learn More</a>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="visual-blob"></div>
+                <div class="visual-card">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                        <strong data-lang="liveAnalysis">Live Analysis</strong>
+                        <span style="color:var(--primary);"><span data-lang="statusActive">● Active</span></span>
+                    </div>
+                    <div style="background:#f0f2f5; height:200px; border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                        <span style="font-size:5rem;">🍃</span>
+                        <div style="position:absolute; top:0; left:0; width:100%; height:4px; background:var(--primary); box-shadow:0 0 10px var(--primary); animation: scan 2s infinite;"></div>
+                    </div>
+                    <div style="margin-top:1rem; display:flex; justify-content:space-between; font-size:0.9rem;">
+                        <span data-lang="confidenceLabel">Confidence</span>
+                        <strong>98%</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="weather-section">
+            <div class="weather-main">
+                <span style="font-size: 4rem;">⛅</span>
+                <div>
+                    <div class="weather-temp">28°C</div>
+                    <div>Visakhapatnam, AP</div>
+                </div>
+            </div>
+            <div class="weather-details">
+                <div class="weather-detail-item">
+                    <strong>65%</strong>
+                    <span data-lang="humidityLabel">Humidity</span>
+                </div>
+                <div class="weather-detail-item">
+                    <strong>12km/h</strong>
+                    <span data-lang="windLabel">Wind</span>
+                </div>
+                <div class="weather-detail-item">
+                    <strong data-lang="conditionGood">Good</strong>
+                    <span data-lang="conditionLabel">Condition</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="section-header">
+                <h2 data-lang="ourFeatures">Our Features</h2>
+                <p data-lang="featuresSubtitle">Everything you need for a healthy harvest</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🔍</span>
+                    <h3 data-lang="featureDiseaseTitle">Disease Detection</h3>
+                    <p style="color:#666; margin-top:0.5rem;" data-lang="featureDiseaseDesc">Upload photos of leaves or seeds to get instant diagnosis and remedies.</p>
+                    <a href="/detect" class="feature-link" data-lang="featureTryNow">Try Now →</a>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🏛️</span>
+                    <h3 data-lang="featureSchemeTitle">Government Schemes</h3>
+                    <p style="color:#666; margin-top:0.5rem;" data-lang="featureSchemeDesc">Stay updated with the latest subsidies, loans, and agricultural policies.</p>
+                    <a href="/schemes" class="feature-link" data-lang="featureViewSchemes">View Schemes →</a>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🎤</span>
+                    <h3 data-lang="featureVoiceTitle">Voice Assistant</h3>
+                    <p style="color:#666; margin-top:0.5rem;" data-lang="featureVoiceDesc">Can't type? Speak to our AI assistant in your local language.</p>
+                    <a href="/voice" class="feature-link" data-lang="featureGetHelp">Get Help →</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <div class="section-header">
+                <h2 data-lang="howItWorks">How It Works</h2>
+            </div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-icon">1</div>
+                    <h3 data-lang="step1Title">Upload Photo</h3>
+                    <p data-lang="step1Desc">Take a clear picture of the affected plant part.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">2</div>
+                    <h3 data-lang="step2Title">AI Analysis</h3>
+                    <p data-lang="step2Desc">Our model identifies the disease in seconds.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon">3</div>
+                    <h3 data-lang="step3Title">Get Remedy</h3>
+                    <p data-lang="step3Desc">Receive treatment steps and preventive advice.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div>
+                <h3>AgroVision</h3>
+                <p style="margin-top:1rem; line-height:1.6; color:#666;" data-lang="footerTagline">Empowering farmers with technology for a better tomorrow.</p>
+            </div>
+            <div>
+                <h3 data-lang="footerQuickLinks">Quick Links</h3>
+                <ul style="list-style:none; margin-top:1rem; line-height:2;">
+                    <li><a href="/detect" style="color:#666; text-decoration:none;" data-lang="navDetect">Detect Disease</a></li>
+                    <li><a href="/schemes" style="color:#666; text-decoration:none;" data-lang="navSchemes">Govt Schemes</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 data-lang="footerContact">Contact</h3>
+                <p style="margin-top:1rem; color:#666;">📞 1800-123-4567</p>
+                <p style="color:#666;">📧 support@agrovision.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span data-lang="copyright">&copy;</span> <span id="year"></span> AgroVision. <span data-lang="allRightsReserved">All rights reserved.</span>
+        </div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <ul>
+            <li><a href="/" class="active"><span class="nav-icon">🏠</span><span data-lang="navHome">Home</span></a></li>
+            <li><a href="/detect"><span class="nav-icon">📸</span><span data-lang="mobileDetect">Detect</span></a></li>
+            <li><a href="/schemes"><span class="nav-icon">🏛️</span><span data-lang="mobileSchemes">Schemes</span></a></li>
+            <li><a href="/voice"><span class="nav-icon">🎤</span><span data-lang="mobileHelp">Help</span></a></li>
+        </ul>
+    </nav>
+    
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+    <button class="back-to-top" style="right: 80px;" onclick="document.body.classList.toggle('high-contrast')">👁️</button>
+
+    <script>
+        // 1. Dynamic Greeting
+        const hour = new Date().getHours();
+        const greetingSpan = document.getElementById('greeting');
+        let greetText = "Welcome to";
+        if (hour >= 5 && hour < 12) greetText = "Good Morning,";
+        else if (hour >= 12 && hour < 17) greetText = "Good Afternoon,";
+        else if (hour >= 17 && hour < 21) greetText = "Good Evening,";
+        
+        // Update only the text part, keep the branding span
+        if(window.innerWidth > 768) { // Only change text on desktop to avoid layout shift on mobile
+             greetingSpan.innerHTML = `${greetText} <br><span>AgroVision</span>`;
+        }
+
+        // 2. Dynamic Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // 3. Back to Top Visibility
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if(window.scrollY > 300) btn.style.display = 'block';
+            else btn.style.display = 'none';
+        });
+
+        // 4. Offline Check
+        window.addEventListener('offline', () => document.getElementById('offlineIndicator').classList.add('show'));
+        window.addEventListener('online', () => document.getElementById('offlineIndicator').classList.remove('show'));
+
+        // 5. CSS Animation Keyframes for Scanning
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes scan { 
+                0% { top: 0; } 
+                50% { top: 100%; } 
+                100% { top: 0; } 
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+    
+    <!-- Language Translation Module -->
+    <script src="/static/js/lang.js"></script>
+    
+    <!-- Chatbot Widget -->
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>

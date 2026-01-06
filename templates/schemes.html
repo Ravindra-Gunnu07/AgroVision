@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Schemes - AgroVision</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS VARIABLES (Consistent) --- */
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --secondary: #2c3e50;
+            --accent: #f39c12;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f9fbfd;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); padding-bottom: 80px; }
+
+        /* --- UTILS --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* --- NAVBAR --- */
+        .navbar { background: white; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; padding: 1rem 0; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        .nav-logo a { font-family: 'Roboto Slab', serif; font-size: 1.5rem; font-weight: 700; color: var(--primary-dark); text-decoration: none; }
+        .nav-menu { display: flex; gap: 2rem; list-style: none; }
+        .nav-menu a { text-decoration: none; color: var(--text-dark); font-weight: 500; }
+        .nav-menu a.active { color: var(--primary); font-weight: 700; }
+
+        /* --- PAGE HEADER --- */
+        .page-header { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; padding: 4rem 0 2rem; margin-bottom: 2rem; text-align: center; }
+        .page-header h1 { font-family: 'Roboto Slab', serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .page-header p { opacity: 0.9; font-size: 1.1rem; }
+
+        /* --- FILTERS & SEARCH --- */
+        .filter-bar {
+            background: white; padding: 1.5rem; border-radius: var(--radius);
+            box-shadow: var(--shadow); margin-top: -3rem; margin-bottom: 2rem;
+            display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+        }
+        .search-box { flex: 2; min-width: 250px; position: relative; }
+        .search-box input {
+            width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd;
+            border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
+        
+        .filter-group { flex: 1; min-width: 150px; }
+        .filter-select {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 1rem; background: white; cursor: pointer; outline: none;
+        }
+
+        /* --- SCHEMES GRID --- */
+        .schemes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+        
+        .scheme-card {
+            background: white; border-radius: var(--radius); overflow: hidden;
+            box-shadow: var(--shadow); transition: 0.3s; border: 1px solid transparent;
+            display: flex; flex-direction: column;
+        }
+        .scheme-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        
+        .card-header { padding: 1.5rem; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: start; }
+        .scheme-icon { font-size: 2rem; background: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        .badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-central { background: rgba(52, 152, 219, 0.1); color: #2980b9; }
+        .badge-state { background: rgba(230, 126, 34, 0.1); color: #d35400; }
+        
+        .card-body { padding: 1.5rem; flex: 1; }
+        .card-body h3 { font-size: 1.25rem; margin-bottom: 0.8rem; color: var(--secondary); }
+        .card-body p { color: var(--text-light); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem; }
+        
+        .benefit-box { background: rgba(46, 204, 113, 0.08); padding: 10px; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+        .benefit-icon { color: var(--primary-dark); }
+        
+        .card-footer { padding: 1.2rem 1.5rem; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .btn-full { width: 100%; text-align: center; }
+
+        /* --- MOBILE NAV & FOOTER --- */
+        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; z-index: 999; padding: 10px 0; }
+        .mobile-bottom-nav ul { display: flex; justify-content: space-around; list-style: none; }
+        .mobile-bottom-nav a { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #999; font-size: 0.75rem; }
+        .mobile-bottom-nav a.active { color: var(--primary); }
+
+        .footer { background: white; margin-top: 4rem; padding: 3rem 0; border-top: 1px solid #eee; text-align: center; color: #888; }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .mobile-bottom-nav { display: block; }
+            .filter-bar { flex-direction: column; align-items: stretch; margin-top: 0; }
+        }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">🌾 <span data-lang="appName">AgroVision</span></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/" data-lang="navHome">Home</a></li>
+                <li><a href="/detect" data-lang="navDetect">Detect Disease</a></li>
+                <li><a href="/schemes" class="active" data-lang="navSchemes">Govt Schemes</a></li>
+                <li><a href="/voice" data-lang="navVoice">Voice Help</a></li>
+                <li><a href="/chatbot" data-lang="navChatbot">🤖 Chatbot</a></li>
+            </ul>
+            <select id="languageSelect" onchange="changeLanguage(this.value)" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer;">
+                <option value="en">English</option>
+                <option value="te">తెలుగు</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ta">தமிழ்</option>
+                <option value="kn">ಕನ್ನಡ</option>
+                <option value="mr">मराठी</option>
+            </select>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <h1 data-lang="schemesTitle">🏛️ Government Schemes</h1>
+            <p data-lang="schemesSubtitle">Explore subsidies, loans, and support programs for farmers.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="filter-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" data-lang="searchPlaceholder" placeholder="Search schemes (e.g., 'Insurance', 'Loan')...">
+            </div>
+            <div class="filter-group">
+                <label data-lang="selectState" style="display:block; margin-bottom:5px; font-weight:500;">Select State:</label>
+                <select id="stateFilter" class="filter-select">
+                    <option value="all" data-lang="allStates">All Locations</option>
+                    <option value="national">National (Central)</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <select id="typeFilter" class="filter-select">
+                    <option value="all">All Types</option>
+                    <option value="financial">Financial Aid</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="infrastructure">Infrastructure</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="schemes-grid" id="schemesGrid">
+            
+            <div class="scheme-card" data-location="national" data-type="financial">
+                <div class="card-header">
+                    <div class="scheme-icon">💰</div>
+                    <span class="badge badge-central" data-lang="centralGovt">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme1Title">PM-KISAN Samman Nidhi</h3>
+                    <p data-lang="scheme1Desc">Financial benefit of ₹6,000/- per year in three equal installments to all landholding farmer families.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme1Benefit">Benefit: ₹6,000/year</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('PM-KISAN')" data-lang="btnCheckEligibility">Check Eligibility</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://pmkisan.gov.in', '_blank')" data-lang="btnApply">Apply</button>
+                </div>
+            </div>
+
+            <div class="scheme-card" data-location="national" data-type="insurance">
+                <div class="card-header">
+                    <div class="scheme-icon">🛡️</div>
+                    <span class="badge badge-central" data-lang="centralGovt">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme2Title">Pradhan Mantri Fasal Bima</h3>
+                    <p data-lang="scheme2Desc">Comprehensive crop insurance providing coverage against non-preventable natural risks from pre-sowing to post-harvest.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme2Benefit">Coverage: Crop Loss</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('Fasal Bima')" data-lang="btnDetails">Details</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://pmfby.gov.in', '_blank')" data-lang="btnApply">Apply</button>
+                </div>
+            </div>
+
+            <div class="scheme-card" data-location="national" data-type="infrastructure">
+                <div class="card-header">
+                    <div class="scheme-icon">💧</div>
+                    <span class="badge badge-central" data-lang="centralGovt">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme3Title">PM Krishi Sinchai Yojana</h3>
+                    <p data-lang="scheme3Desc">Enhance farm productivity by ensuring better utilization of water resources through efficient irrigation practices and water management.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme3Benefit">Irrigation Support</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('PM Krishi Sinchai Yojana')" data-lang="btnDetails">Details</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://pmksy.gov.in', '_blank')" data-lang="btnApply">Apply</button>
+                </div>
+            </div>
+
+            <div class="scheme-card" data-location="national" data-type="financial">
+                <div class="card-header">
+                    <div class="scheme-icon">🏗️</div>
+                    <span class="badge badge-central" data-lang="centralGovt">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme4Title">Agriculture Infrastructure Fund</h3>
+                    <p data-lang="scheme4Desc">Financial support for development of post-harvest management infrastructure and community farming assets to reduce wastage.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme4Benefit">Infrastructure Funding</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('Agriculture Infrastructure Fund')" data-lang="btnDetails">Details</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://agriinfra.dac.gov.in', '_blank')" data-lang="btnApply">Apply</button>
+                </div>
+            </div>
+
+            <div class="scheme-card" data-location="national" data-type="infrastructure">
+                <div class="card-header">
+                    <div class="scheme-icon">🧪</div>
+                    <span class="badge badge-central">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme5Title">Soil Health Card Scheme</h3>
+                    <p data-lang="scheme5Desc">Get a report card on the nutrient status of your holding and advice on dosage of fertilizers.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme5Benefit">Free Soil Testing</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('Soil Health Card')" data-lang="btnLocateLab">Locate Lab</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://soilhealth.dac.gov.in', '_blank')" data-lang="btnRegister">Register</button>
+                </div>
+            </div>
+
+            <div class="scheme-card" data-location="national" data-type="financial">
+                <div class="card-header">
+                    <div class="scheme-icon">💳</div>
+                    <span class="badge badge-central" data-lang="centralGovt">Central Govt</span>
+                </div>
+                <div class="card-body">
+                    <h3 data-lang="scheme6Title">Kisan Credit Card (KCC)</h3>
+                    <p data-lang="scheme6Desc">Timely access to credit for farmers to meet their cultivation and other needs.</p>
+                    <div class="benefit-box">
+                        <span class="benefit-icon">✓</span>
+                        <strong data-lang="scheme6Benefit">Low Interest Loan</strong>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline btn-full" onclick="openModal('KCC')" data-lang="btnCheckEligibility">Eligibility</button>
+                    <button class="btn btn-primary btn-full" onclick="window.open('https://www.india.gov.in/kisan-credit-card-kcc', '_blank')" data-lang="btnApply">Apply</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="infoModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content animate-scale">
+            <h2 id="modalTitle" style="margin-bottom: 1rem;">Scheme Name</h2>
+            <p style="margin-bottom: 1.5rem; color: #666;">
+                You are about to be redirected to the official government portal for this scheme. 
+                Please keep your Aadhaar card and Land Passbook ready.
+            </p>
+            <button class="btn btn-primary" onclick="document.getElementById('infoModal').style.display='none'">Got it</button>
+        </div>
+    </div>
+
+    <nav class="mobile-bottom-nav">
+        <ul>
+            <li><a href="/"><span style="font-size:1.4rem">🏠</span><span data-lang="navHome">Home</span></a></li>
+            <li><a href="/detect"><span style="font-size:1.4rem">📸</span><span data-lang="navDetect">Detect</span></a></li>
+            <li><a href="/schemes" class="active"><span style="font-size:1.4rem">🏛️</span><span data-lang="navSchemes">Schemes</span></a></li>
+            <li><a href="/voice"><span style="font-size:1.4rem">🎤</span><span data-lang="navVoice">Help</span></a></li>
+        </ul>
+    </nav>
+
+    <footer class="footer">
+        <div class="container">
+            <p data-lang="footerCopyright">&copy; 2026 AgroVision. Information sourced from official Govt portals.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 1. FILTERING LOGIC
+        const searchInput = document.getElementById('searchInput');
+        const stateFilter = document.getElementById('stateFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const cards = document.querySelectorAll('.scheme-card');
+
+        function filterSchemes() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const stateValue = stateFilter.value;
+            const typeValue = typeFilter.value;
+
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const location = card.getAttribute('data-location');
+                const type = card.getAttribute('data-type');
+
+                const matchesSearch = title.includes(searchTerm);
+                const matchesState = stateValue === 'all' || location === stateValue;
+                const matchesType = typeValue === 'all' || type === typeValue;
+
+                if (matchesSearch && matchesState && matchesType) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Add Event Listeners
+        searchInput.addEventListener('input', filterSchemes);
+        stateFilter.addEventListener('change', filterSchemes);
+        typeFilter.addEventListener('change', filterSchemes);
+
+        // 2. MODAL LOGIC
+        function openModal(schemeName) {
+            document.getElementById('modalTitle').textContent = schemeName;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'infoModal') {
+                document.getElementById('infoModal').style.display = 'none';
+            }
+        }
+    </script>
+    
+    <!-- Language Translation Module -->
+    <script src="/static/js/lang.js"></script>
+    
+    <!-- Chatbot Widget -->
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>
